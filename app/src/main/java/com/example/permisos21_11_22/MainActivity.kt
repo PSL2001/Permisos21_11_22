@@ -1,16 +1,28 @@
 package com.example.permisos21_11_22
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.permisos21_11_22.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    val responseLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        when (it.resultCode) {
+            RESULT_OK -> {
+                binding.imImagen.setImageBitmap(it.data?.extras?.get("data") as Bitmap)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -62,5 +74,7 @@ class MainActivity : AppCompatActivity() {
     //---------------------------------------------------------------------------------------------
     private fun abrirCamara() {
         Toast.makeText(this, "Abriendo Cámara....", Toast.LENGTH_SHORT).show()
+        val intentCamara = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        responseLauncher.launch(intentCamara)
     }
 }
